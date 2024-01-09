@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  # 自己署名証明書(いわゆるオレオレ証明書)の作成
+  self-signed-certificate:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: self-signed-certificate
+    hostname: self-signed-certificate
+    volumes:
+      - "../data/pki:/etc/pki" # 鍵保管用のボリューム割り当て
+

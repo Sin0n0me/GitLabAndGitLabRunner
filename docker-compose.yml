@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  gitlab:
+    image: 'gitlab/gitlab-ce:latest'
+    restart: always
+    container_name: gitlab
+    hostname: gitlab
+    volumes:
+      - ./gitlab/config:/etc/gitlab
+      - ./gitlab/logs:/var/log/gitlab
+      - ./gitlab/data:/var/opt/gitlab
+      - ./ssl:/etc/gitlab/ssl
+      # 以下二つは読み取り専用にする(誤って変更しないように)
+      - ./data/pki/gitlab_sin0n0me_certificate.crt:/etc/gitlab/ssl/gitlab_sin0n0me_certificate.crt:ro
+      - ./data/pki/gitlab_sin0n0me_certificate.key:/etc/gitlab/ssl/gitlab_sin0n0me_certificate.key:ro
+    ports:
+      - '443:443'
+      - '20460:22'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://gitlab.sin0n0me.com'
+        nginx['enable'] = true
+        nginx['redirect_http_to_https'] = true
+        letsencrypt['enable'] = false
+        nginx['listen_port'] = 443
+        gitlab_rails['gitlab_shell_ssh_port'] = 20460
+        nginx['ssl_certificate'] = "/etc/gitlab/ssl/gitlab_sin0n0me_certificate.crt"
+        nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/gitlab_sin0n0me_certificate.key"
+    network_mode: "bridge"
+  
