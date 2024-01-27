@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  gitlab-test-runner:
+    build: 
+      context: ./
+      dockerfile: Dockerfile
+    container_name: 'test-${RUNNER_NAME}'
+    hostname: 'test-${RUNNER_NAME}'
+    #restart: unless-stopped # alwaysでもいいかもしれない?
+    volumes:
+      - ./output:/etc/output:rw
+      - ../gitlab/runner/config/${RUNNER_NAME}:/etc/gitlab-runner:rw
+      - /var/run/docker.sock:/var/run/docker.sock:ro # dockerコマンド認識用
+      - ../data/pki/gitlab_sin0n0me_ca.crt:/etc/gitlab-runner/certs/gitlab_sin0n0me_ca.crt:ro
+    environment:
+      - VIRTUAL_DISPLAY_NUMBER=:1
+      - DISPLAY_SIZE=1920x1080
+      - DISPLAY_DEPTH=16
+      - CAPTURE_FRAME_RATE=30
+      - DEFAULT_CAPTURE_TIME=30
+      - OUTPUT_FILE_DIRECTORY=/etc/output
+      - CAPTURE_VIDEO_CODEC=libx264 
+      - CAPTURE_PRESET=ultrafast
+      - TOKEN=${TOKEN}  # 要修正
+      - RUNNER_NAME=${RUNNER_NAME}
+    command: ["${TOKEN}", "${RUNNER_NAME}"] 
+
