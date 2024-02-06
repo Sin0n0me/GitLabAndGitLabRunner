@@ -1,5 +1,5 @@
-# 軽量なAlpine Linuxを使う(Ubuntuよりかなり軽い)
-# 認証以外の機能は不要なので必要最小限にする
+# 軽量なAlpine Linuxを使う(Ubuntuより軽い)
+# 証明書作成以外の機能は不要なので必要最小限にする
 FROM alpine:latest
 WORKDIR /workdir
 
@@ -8,8 +8,8 @@ RUN apk add --update openssl && \
 RUN apk add --no-cache bash
 
 COPY subject.cnf subject.cnf
-COPY generate_key.sh generate_key.sh
+COPY generate_key_and_certificate.sh generate_key_and_certificate.sh
 
-RUN chmod +x generate_key.sh
+RUN chmod +x generate_key_and_certificate.sh
 
-ENTRYPOINT [ "./generate_key.sh" ]
+ENTRYPOINT [ "./generate_key_and_certificate.sh" ]
