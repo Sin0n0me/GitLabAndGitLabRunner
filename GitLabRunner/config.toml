@@ -1,0 +1,38 @@
+current = 4
+check_interval = 0
+log_level = "info"
+[session_server]
+  session_timeout = 1200
+[[runners]]
+  name = "gitlab-shared-runner"
+  executor = "docker+machine"
+  [runners.docker]
+    tls_verify = false
+    privileged = true
+    disable_entrypoint_overwrite = false
+    oom_kill_disable = false
+    disable_cache = false
+    shm_size = 0
+  [runners.machine]
+    IdleCount = 0
+    IdleTime = 1200
+    MachineDriver = "amazonec2"
+    MachineName = "gitlab-runner-AS-%s"
+    MaxBuilds = 10
+    MachineOptions = [
+      "amazonec2-access-key={{ amazonec2-access-key }}",
+      "amazonec2-secret-key={{ amazonec2-secret-key }}",
+      "amazonec2-region={{ amazonec2-region }}",
+      "amazonec2-vpc-id={{ amazonec2-vpc-id }}",
+      "amazonec2-subnet-id={{ amazonec2-subnet-id }}",
+      "amazonec2-zone={{ amazonec2-zone }}",
+      "amazonec2-use-private-address=true",
+      "amazonec2-security-group={{ amazonec2-security-group }}",
+      "amazonec2-instance-type=t3a.small",
+      "amazonec2-root-size=16",
+    ]
+    [[runners.machine.autoscaling]]
+      Periods = ["* * 9-17 * * mon-fri *"]
+      IdleCount = 10
+      IdleTime = 3600
+      Timezone = "Asia/Tokyo"

@@ -12,51 +12,24 @@ RUN chmod 777 -R .
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get update 
 
-# wget ファイル取得用
-# software-properties-common 外部リポジトリの取得用
-# apt-transport-https httpsでの取得用
+# 全てのRunnerに共通して存在するツールの取得
+# git OSSなどのclone用
 # curl ファイル取得用
-RUN apt-get install -y \
-    wget \
-    apt-transport-https \
-    curl \
-    && apt-get update
-
-#RUN apt-get install -y software-properties-common 
-
-# packageのリポジトリ情報が古いと怒られる
-RUN apt-get update 
-
-# 必要なツール類を取得
-# git 自作テストツール等のスクリプト取得用
 # xvfb 仮想ディスプレイ作成用 
 # ffmpeg 動画キャプチャ用
-# python3.9 マウスやキーボード操作などの自動テスト用
-# gnome-screenshot スクリーンショット用
-# x11-apps 
-# xdotool
-# libglu1-mesa
-# libegl1-mesa
-#
-RUN apt-get install -y \ 
+# xdotool 
+# libglu1-mesa 
+# libegl1-mesa 
+RUN apt-get install -y \
     git \
+    curl \
     xvfb \
     gnome-screenshot \
     ffmpeg \
-    python3.9 \
-    x11-apps \
     xdotool \
     libglu1-mesa \
     libegl1-mesa \
     && apt-get update
-
-# VirtualGLのインストール
-# https://github.com/VirtualGL/virtualgl/releases
-# amd64
-# arm64
-# i386
-RUN curl -L -o virtualgl.deb https://github.com/VirtualGL/virtualgl/releases/download/3.1/virtualgl_3.1_amd64.deb
-RUN dpkg -i virtualgl.deb
 
 # 以下はX11Libによる自動操作用ライブラリとコンパイル用ツール
 # cmake
@@ -87,15 +60,9 @@ RUN cd AutoGameControl/EmulateForLinux/build \
     && chmod +x EmulateForLinux
 
 # 画面キャプチャのスクリプト
-COPY capture_screen.sh capture_screen.sh
+COPY Test/capture_screen.sh capture_screen.sh
 RUN chmod +x capture_screen.sh
 
 # runnerとXvfb起動用スクリプト
-COPY runner_start.sh runner_start.sh
+COPY Test/runner_start.sh runner_start.sh
 RUN chmod +x runner_start.sh
-
-COPY captured_inputs.txt captured_inputs.txt
-
-# コンテナ起動時にXvfbを起動
-ENTRYPOINT ["./capture_screen.sh"]
-# ENTRYPOINT ["./runner_start.sh"]

@@ -22,10 +22,13 @@ RUN apt-get install -y \
     curl \
     && apt-get update
 
-#RUN apt-get install -y software-properties-common 
-
 # packageのリポジトリ情報が古いと怒られる
 RUN apt-get update 
+
+# Windowsアプリケーションを起動するためのパッケージのインストール
+RUN dpkg --add-architecture i386 \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends wine32 wine64
 
 # 必要なツール類を取得
 # git 自作テストツール等のスクリプト取得用
@@ -34,9 +37,9 @@ RUN apt-get update
 # python3.9 マウスやキーボード操作などの自動テスト用
 # gnome-screenshot スクリーンショット用
 # x11-apps 
-# xdotool
-# libglu1-mesa
-# libegl1-mesa
+# xdotool 
+# libglu1-mesa 
+# libegl1-mesa 
 #
 RUN apt-get install -y \ 
     git \
@@ -49,6 +52,9 @@ RUN apt-get install -y \
     libglu1-mesa \
     libegl1-mesa \
     && apt-get update
+
+# Wine の設定
+RUN winecfg
 
 # VirtualGLのインストール
 # https://github.com/VirtualGL/virtualgl/releases

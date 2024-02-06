@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  gitlab-test-runner:
+  gitlab-ubuntu-test-runner:
     build: 
       context: ./
       dockerfile: Dockerfile
@@ -9,20 +9,22 @@ services:
     hostname: 'test-${RUNNER_NAME}'
     #restart: unless-stopped # alwaysでもいいかもしれない?
     volumes:
-      - ./output:/etc/output:rw
+      - ./output:${OUTPUT_FILE_DIRECTORY}:rw
       - ../gitlab/runner/config/${RUNNER_NAME}:/etc/gitlab-runner:rw
       - /var/run/docker.sock:/var/run/docker.sock:ro # dockerコマンド認識用
       - ../data/pki/gitlab_sin0n0me_ca.crt:/etc/gitlab-runner/certs/gitlab_sin0n0me_ca.crt:ro
     environment:
-      - VIRTUAL_DISPLAY_NUMBER=:1
-      - DISPLAY_SIZE=1920x1080
-      - DISPLAY_DEPTH=16
-      - CAPTURE_FRAME_RATE=30
-      - DEFAULT_CAPTURE_TIME=30
-      - OUTPUT_FILE_DIRECTORY=/etc/output
-      - CAPTURE_VIDEO_CODEC=libx264 
-      - CAPTURE_PRESET=ultrafast
-      - TOKEN=${TOKEN}  # 要修正
+      - VIRTUAL_DISPLAY_NUMBER=:1           # 実際にアプリケーションを表示するディスプレイ番号
+      - VGL_DISPLAY_NUMBER=:2               # GPUアクセス用ディスプレイ番号
+      - SCREEN_NUMBER=0                     # スクリーン番号
+      - DISPLAY_SIZE=1920x1080              # 仮想ディスプレイのサイズ
+      - DISPLAY_DEPTH=24                    # 仮想ディスプレイの深度
+      - CAPTURE_FRAME_RATE=60               # 動画のフレームレート
+      - DEFAULT_CAPTURE_TIME=30             # キャプチャ時間のデフォルトの値
+      - OUTPUT_FILE_DIRECTORY=/etc/output   # 出力ディレクトリ
+      - CAPTURE_VIDEO_CODEC=libx264         # キャプチャ時のビデオコーデック
+      - CAPTURE_PRESET=ultrafast            # キャプチャ時のpreset
+      - TOKEN=${TOKEN}                      # 要修正
       - RUNNER_NAME=${RUNNER_NAME}
     command: ["${TOKEN}", "${RUNNER_NAME}"] 
 

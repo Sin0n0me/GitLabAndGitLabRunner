@@ -1,6 +1,10 @@
 
-data/*
-*/output/*
+/data/*
+/output/*
+
 
 *.txt
+*.mp4
+*.png
+
 
